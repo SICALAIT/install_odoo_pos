@@ -209,14 +209,15 @@ Write-Host "Tache planifiee creee avec succes." -ForegroundColor Green
 # 4. Telecharger et installer l'extension Chrome
 Write-Host "ETAPE 4: Installation de l'extension Chrome" -ForegroundColor Yellow
 
-$extensionPath = "$installFolder\chrome_extention_odoo_pos_cashdrawer.crx"
-$extensionUrl = "https://github.com/ralphi2811/chrome_extention_odoo_pos_cashdrawer/releases/download/1.0/chrome_extention_odoo_pos_cashdrawer.crx"
+$extensionZipPath = "$tempFolder\chrome_extension_odoo_pos_cashdrawer.zip"
+$extensionUrl = "https://github.com/ralphi2811/chrome_extention_odoo_pos_cashdrawer/archive/refs/tags/1.0.zip"
+$extensionExtractPath = "$installFolder\chrome_extension_odoo_pos_cashdrawer"
 
-# Verifier si le fichier existe deja
-$extensionExists = Test-Path $extensionPath
+# Verifier si le dossier d'extension existe deja
+$extensionExists = Test-Path $extensionExtractPath
 if ($extensionExists) {
-    Write-Host "Le fichier d'extension existe deja: $extensionPath" -ForegroundColor Green
-    Write-Host "Utilisation du fichier existant..." -ForegroundColor Cyan
+    Write-Host "Le dossier d'extension existe deja: $extensionExtractPath" -ForegroundColor Green
+    Write-Host "Utilisation de l'extension existante..." -ForegroundColor Cyan
     $downloadSuccess = $true
 }
 else {
@@ -235,39 +236,57 @@ else {
             Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
         }
         
-        $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionPath
+        $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionZipPath
         
         if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
             Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
         }
     }
+
+    if ($downloadSuccess) {
+        Write-Host "Extension telechargee avec succes." -ForegroundColor Green
+        
+        # Extraire le fichier ZIP
+        Write-Host "Extraction de l'extension..." -ForegroundColor Cyan
+        
+        try {
+            # Créer le dossier d'extraction s'il n'existe pas
+            if (-not (Test-Path $extensionExtractPath)) {
+                New-Item -ItemType Directory -Path $extensionExtractPath -Force | Out-Null
+            }
+            
+            # Extraire le ZIP
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($extensionZipPath, $tempFolder)
+            
+            # Le ZIP extrait crée un dossier avec le nom du projet et le tag, déplacer son contenu
+            $extractedFolder = Get-ChildItem -Path $tempFolder -Directory | Where-Object { $_.Name -like "chrome_extention_odoo_pos_cashdrawer*" } | Select-Object -First 1
+            
+            if ($extractedFolder) {
+                # Copier le contenu du dossier extrait vers le dossier d'installation
+                Copy-Item -Path "$($extractedFolder.FullName)\*" -Destination $extensionExtractPath -Recurse -Force
+                Write-Host "Extension extraite avec succes dans: $extensionExtractPath" -ForegroundColor Green
+            } else {
+                Write-Host "Impossible de trouver le dossier extrait." -ForegroundColor Red
+                $downloadSuccess = $false
+            }
+        }
+        catch {
+            Write-Host "Erreur lors de l'extraction de l'extension: $_" -ForegroundColor Red
+            $downloadSuccess = $false
+        }
+    }
 }
 
 if ($downloadSuccess) {
-    if (-not $extensionExists) {
-        Write-Host "Extension telechargee avec succes." -ForegroundColor Green
-    }
-    
-    # Installer l'extension Chrome
-    Write-Host "Installation de l'extension Chrome..." -ForegroundColor Cyan
-    
-    # Creer le dossier pour les preferences Chrome si necessaire
-    $chromePrefsFolder = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Extensions"
-    if (-not (Test-Path $chromePrefsFolder)) {
-        New-Item -ItemType Directory -Path $chromePrefsFolder -Force | Out-Null
-    }
-    
-    # Copier l'extension dans le dossier d'extensions Chrome
-    # Note: Cette methode est simplifiee, l'installation reelle d'extensions .crx necessite des etapes supplementaires
-    # qui varient selon la version de Chrome et les politiques de securite
-    
+    # Instructions pour installer l'extension non empaquetée
     Write-Host "Pour installer l'extension, veuillez suivre ces etapes manuelles:" -ForegroundColor Magenta
     Write-Host "1. Ouvrez Chrome" -ForegroundColor White
     Write-Host "2. Allez a chrome://extensions/" -ForegroundColor White
     Write-Host "3. Activez le 'Mode developpeur' en haut a droite" -ForegroundColor White
-    Write-Host "4. Faites glisser le fichier suivant dans la fenetre:" -ForegroundColor White
-    Write-Host "   $extensionPath" -ForegroundColor Cyan
-    Write-Host "5. Confirmez l'installation" -ForegroundColor White
+    Write-Host "4. Cliquez sur 'Charger l'extension non empaquetee'" -ForegroundColor White
+    Write-Host "5. Naviguez et selectionnez le dossier suivant:" -ForegroundColor White
+    Write-Host "   $extensionExtractPath" -ForegroundColor Cyan
     
     # Alternative: Utiliser les politiques de groupe pour installer l'extension
     Write-Host "Alternative pour les administrateurs systeme:" -ForegroundColor Magenta
@@ -275,7 +294,7 @@ if ($downloadSuccess) {
     Write-Host "Consultez: https://support.google.com/chrome/a/answer/7517525" -ForegroundColor White
 }
 else {
-    Write-Host "Impossible de telecharger l'extension Chrome. Verifiez votre connexion internet." -ForegroundColor Red
+    Write-Host "Impossible de telecharger ou d'extraire l'extension Chrome. Verifiez votre connexion internet." -ForegroundColor Red
 }
 
 # 5. Telecharger l'icone Odoo POS

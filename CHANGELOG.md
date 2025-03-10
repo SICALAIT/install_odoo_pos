@@ -16,6 +16,9 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Création automatique du dossier "log" et du fichier "cashdrawer.log" nécessaires au fonctionnement du webservice
 - Messages informatifs supplémentaires pour indiquer clairement les étapes du processus
 
+### Modifié
+- Changement de la méthode d'installation de l'extension Chrome : téléchargement du code source (ZIP) depuis GitHub, extraction et installation en tant qu'extension non empaquetée au lieu d'utiliser le fichier .crx
+
 ## [1.0.3] - 2025-03-10
 
 ### Amélioré
