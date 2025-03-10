@@ -5,6 +5,17 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2025-03-10
+
+### Corrigé
+- Correction du problème de blocage du script lors du lancement du webservice (suppression de l'option `-Wait` qui empêchait le script de continuer)
+- Ajout d'une vérification du démarrage du webservice avec un délai de 5 secondes
+- Arrêt propre du webservice après vérification pour permettre au script de continuer
+
+### Ajouté
+- Création automatique du dossier "log" et du fichier "cashdrawer.log" nécessaires au fonctionnement du webservice
+- Messages informatifs supplémentaires pour indiquer clairement les étapes du processus
+
 ## [1.0.3] - 2025-03-10
 
 ### Amélioré
