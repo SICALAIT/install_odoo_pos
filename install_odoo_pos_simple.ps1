@@ -87,36 +87,47 @@ else {
 }
 
 # 2. Telecharger le webservice cashdrawer
-Write-Host "ETAPE 2: Telechargement du webservice cashdrawer" -ForegroundColor Yellow
+Write-Host "ETAPE 2: Installation du webservice cashdrawer" -ForegroundColor Yellow
 
 $webservicePath = "$installFolder\cashdrawer_service.exe"
 $webserviceUrl = "https://github.com/ralphi2811/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service.exe"
 
-Write-Host "Tentative de telechargement depuis: $webserviceUrl" -ForegroundColor Cyan
-Write-Host "Si le telechargement echoue, verifiez que l'URL est correcte et accessible." -ForegroundColor Yellow
+# Verifier si le fichier existe deja
+$webserviceExists = Test-Path $webservicePath
+if ($webserviceExists) {
+    Write-Host "Le fichier webservice existe deja: $webservicePath" -ForegroundColor Green
+    Write-Host "Utilisation du fichier existant..." -ForegroundColor Cyan
+    $downloadSuccess = $true
+} 
+else {
+    Write-Host "Tentative de telechargement depuis: $webserviceUrl" -ForegroundColor Cyan
+    Write-Host "Si le telechargement echoue, verifiez que l'URL est correcte et accessible." -ForegroundColor Yellow
 
-# Essayer de telecharger 3 fois avant d'abandonner
-$maxRetries = 3
-$retryCount = 0
-$downloadSuccess = $false
+    # Essayer de telecharger 3 fois avant d'abandonner
+    $maxRetries = 3
+    $retryCount = 0
+    $downloadSuccess = $false
 
-while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-    $retryCount++
-    
-    if ($retryCount -gt 1) {
-        Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
-        Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
-    }
-    
-    $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
-    
-    if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-        Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+        $retryCount++
+        
+        if ($retryCount -gt 1) {
+            Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
+        }
+        
+        $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
+        
+        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+            Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+        }
     }
 }
 
 if ($downloadSuccess) {
-    Write-Host "Webservice telecharge avec succes." -ForegroundColor Green
+    if (-not $webserviceExists) {
+        Write-Host "Webservice telecharge avec succes." -ForegroundColor Green
+    }
     
     # Executer le webservice une premiere fois pour valider l'acces
     Write-Host "Lancement du webservice pour la premiere fois pour valider l'acces..." -ForegroundColor Cyan
@@ -168,30 +179,41 @@ Write-Host "ETAPE 4: Installation de l'extension Chrome" -ForegroundColor Yellow
 $extensionPath = "$installFolder\chrome_extention_odoo_pos_cashdrawer.crx"
 $extensionUrl = "https://github.com/ralphi2811/chrome_extention_odoo_pos_cashdrawer/releases/download/1.0/chrome_extention_odoo_pos_cashdrawer.crx"
 
-Write-Host "Tentative de telechargement depuis: $extensionUrl" -ForegroundColor Cyan
+# Verifier si le fichier existe deja
+$extensionExists = Test-Path $extensionPath
+if ($extensionExists) {
+    Write-Host "Le fichier d'extension existe deja: $extensionPath" -ForegroundColor Green
+    Write-Host "Utilisation du fichier existant..." -ForegroundColor Cyan
+    $downloadSuccess = $true
+}
+else {
+    Write-Host "Tentative de telechargement depuis: $extensionUrl" -ForegroundColor Cyan
 
-# Essayer de telecharger 3 fois avant d'abandonner
-$maxRetries = 3
-$retryCount = 0
-$downloadSuccess = $false
+    # Essayer de telecharger 3 fois avant d'abandonner
+    $maxRetries = 3
+    $retryCount = 0
+    $downloadSuccess = $false
 
-while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-    $retryCount++
-    
-    if ($retryCount -gt 1) {
-        Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
-        Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
-    }
-    
-    $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionPath
-    
-    if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-        Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+        $retryCount++
+        
+        if ($retryCount -gt 1) {
+            Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
+        }
+        
+        $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionPath
+        
+        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+            Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+        }
     }
 }
 
 if ($downloadSuccess) {
-    Write-Host "Extension telechargee avec succes." -ForegroundColor Green
+    if (-not $extensionExists) {
+        Write-Host "Extension telechargee avec succes." -ForegroundColor Green
+    }
     
     # Installer l'extension Chrome
     Write-Host "Installation de l'extension Chrome..." -ForegroundColor Cyan
@@ -230,30 +252,38 @@ $iconUrl = "https://www.odoo.com/web/image/res.users/752553/image_1024?unique=a9
 $iconPath = "$installFolder\odoo_pos_icon.ico"
 $tempIconPath = "$tempFolder\odoo_pos_icon.png"
 
-if (Download-File -Url $iconUrl -OutputPath $tempIconPath) {
-    Write-Host "Icone telechargee avec succes." -ForegroundColor Green
-    
-    # Conversion de l'image en icone (necessite PowerShell 7 ou superieur avec le module System.Drawing)
-    try {
-        Add-Type -AssemblyName System.Drawing
-        $image = [System.Drawing.Image]::FromFile($tempIconPath)
-        $icon = [System.Drawing.Icon]::FromHandle($image.GetHicon())
-        $fileStream = New-Object System.IO.FileStream($iconPath, [System.IO.FileMode]::Create)
-        $icon.Save($fileStream)
-        $fileStream.Close()
-        $icon.Dispose()
-        $image.Dispose()
-        Write-Host "Conversion de l'icone terminee." -ForegroundColor Green
-    }
-    catch {
-        Write-Host "Erreur lors de la conversion de l'icone: $_" -ForegroundColor Red
-        Write-Host "Utilisation d'une icone par defaut..." -ForegroundColor Yellow
-        $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icone par defaut de Windows
-    }
+# Verifier si l'icone existe deja
+$iconExists = Test-Path $iconPath
+if ($iconExists) {
+    Write-Host "L'icone existe deja: $iconPath" -ForegroundColor Green
+    Write-Host "Utilisation de l'icone existante..." -ForegroundColor Cyan
 }
 else {
-    Write-Host "Impossible de telecharger l'icone. Utilisation d'une icone par defaut." -ForegroundColor Yellow
-    $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icone par defaut de Windows
+    if (Download-File -Url $iconUrl -OutputPath $tempIconPath) {
+        Write-Host "Icone telechargee avec succes." -ForegroundColor Green
+    
+        # Conversion de l'image en icone (necessite PowerShell 7 ou superieur avec le module System.Drawing)
+        try {
+            Add-Type -AssemblyName System.Drawing
+            $image = [System.Drawing.Image]::FromFile($tempIconPath)
+            $icon = [System.Drawing.Icon]::FromHandle($image.GetHicon())
+            $fileStream = New-Object System.IO.FileStream($iconPath, [System.IO.FileMode]::Create)
+            $icon.Save($fileStream)
+            $fileStream.Close()
+            $icon.Dispose()
+            $image.Dispose()
+            Write-Host "Conversion de l'icone terminee." -ForegroundColor Green
+        }
+        catch {
+            Write-Host "Erreur lors de la conversion de l'icone: $_" -ForegroundColor Red
+            Write-Host "Utilisation d'une icone par defaut..." -ForegroundColor Yellow
+            $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icone par defaut de Windows
+        }
+    }
+    else {
+        Write-Host "Impossible de telecharger l'icone. Utilisation d'une icone par defaut." -ForegroundColor Yellow
+        $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icone par defaut de Windows
+    }
 }
 
 # 6. Creer un raccourci sur le bureau en mode kiosk

@@ -204,36 +204,47 @@ else {
 
 # 2. Télécharger le webservice cashdrawer
 if ($installWebservice) {
-    Write-ColorOutput "ÉTAPE 2: Téléchargement du webservice cashdrawer" -ForegroundColor "Yellow"
+    Write-ColorOutput "ÉTAPE 2: Installation du webservice cashdrawer" -ForegroundColor "Yellow"
 
     $webservicePath = "$installFolder\cashdrawer_service.exe"
     $webserviceUrl = "https://github.com/ralphi2811/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service.exe"
 
-    Write-ColorOutput "Tentative de téléchargement depuis: $webserviceUrl" -ForegroundColor "Cyan"
-    Write-ColorOutput "Si le téléchargement échoue, vérifiez que l'URL est correcte et accessible." -ForegroundColor "Yellow"
+    # Vérifier si le fichier existe déjà
+    $webserviceExists = Test-Path $webservicePath
+    if ($webserviceExists) {
+        Write-ColorOutput "Le fichier webservice existe déjà: $webservicePath" -ForegroundColor "Green"
+        Write-ColorOutput "Utilisation du fichier existant..." -ForegroundColor "Cyan"
+        $downloadSuccess = $true
+    } 
+    else {
+        Write-ColorOutput "Tentative de téléchargement depuis: $webserviceUrl" -ForegroundColor "Cyan"
+        Write-ColorOutput "Si le téléchargement échoue, vérifiez que l'URL est correcte et accessible." -ForegroundColor "Yellow"
 
-    # Essayer de télécharger 3 fois avant d'abandonner
-    $maxRetries = 3
-    $retryCount = 0
-    $downloadSuccess = $false
+        # Essayer de télécharger 3 fois avant d'abandonner
+        $maxRetries = 3
+        $retryCount = 0
+        $downloadSuccess = $false
 
-    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-        $retryCount++
-        
-        if ($retryCount -gt 1) {
-            Write-ColorOutput "Tentative $retryCount de $maxRetries..." -ForegroundColor "Yellow"
-            Start-Sleep -Seconds 2  # Attendre un peu avant de réessayer
-        }
-        
-        $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
-        
-        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-            Write-ColorOutput "Échec du téléchargement. Nouvelle tentative..." -ForegroundColor "Yellow"
+        while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+            $retryCount++
+            
+            if ($retryCount -gt 1) {
+                Write-ColorOutput "Tentative $retryCount de $maxRetries..." -ForegroundColor "Yellow"
+                Start-Sleep -Seconds 2  # Attendre un peu avant de réessayer
+            }
+            
+            $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
+            
+            if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+                Write-ColorOutput "Échec du téléchargement. Nouvelle tentative..." -ForegroundColor "Yellow"
+            }
         }
     }
 
     if ($downloadSuccess) {
-        Write-ColorOutput "Webservice téléchargé avec succès." -ForegroundColor "Green"
+        if (-not $webserviceExists) {
+            Write-ColorOutput "Webservice téléchargé avec succès." -ForegroundColor "Green"
+        }
         
         # Exécuter le webservice une première fois pour valider l'accès
         Write-ColorOutput "Lancement du webservice pour la première fois pour valider l'accès..." -ForegroundColor "Cyan"
@@ -260,7 +271,7 @@ if ($installWebservice) {
     }
 }
 else {
-    Write-ColorOutput "ÉTAPE 2: Téléchargement du webservice cashdrawer [IGNORÉE]" -ForegroundColor "Gray"
+    Write-ColorOutput "ÉTAPE 2: Installation du webservice cashdrawer [IGNORÉE]" -ForegroundColor "Gray"
 }
 
 # 3. Créer une tâche planifiée pour lancer le webservice au démarrage
@@ -295,30 +306,41 @@ if ($installExtension) {
     $extensionPath = "$installFolder\chrome_extention_odoo_pos_cashdrawer.crx"
     $extensionUrl = "https://github.com/ralphi2811/chrome_extention_odoo_pos_cashdrawer/releases/download/1.0/chrome_extention_odoo_pos_cashdrawer.crx"
 
-    Write-ColorOutput "Tentative de téléchargement depuis: $extensionUrl" -ForegroundColor "Cyan"
+    # Vérifier si le fichier existe déjà
+    $extensionExists = Test-Path $extensionPath
+    if ($extensionExists) {
+        Write-ColorOutput "Le fichier d'extension existe déjà: $extensionPath" -ForegroundColor "Green"
+        Write-ColorOutput "Utilisation du fichier existant..." -ForegroundColor "Cyan"
+        $downloadSuccess = $true
+    }
+    else {
+        Write-ColorOutput "Tentative de téléchargement depuis: $extensionUrl" -ForegroundColor "Cyan"
 
-    # Essayer de télécharger 3 fois avant d'abandonner
-    $maxRetries = 3
-    $retryCount = 0
-    $downloadSuccess = $false
+        # Essayer de télécharger 3 fois avant d'abandonner
+        $maxRetries = 3
+        $retryCount = 0
+        $downloadSuccess = $false
 
-    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-        $retryCount++
-        
-        if ($retryCount -gt 1) {
-            Write-ColorOutput "Tentative $retryCount de $maxRetries..." -ForegroundColor "Yellow"
-            Start-Sleep -Seconds 2  # Attendre un peu avant de réessayer
-        }
-        
-        $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionPath
-        
-        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-            Write-ColorOutput "Échec du téléchargement. Nouvelle tentative..." -ForegroundColor "Yellow"
+        while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+            $retryCount++
+            
+            if ($retryCount -gt 1) {
+                Write-ColorOutput "Tentative $retryCount de $maxRetries..." -ForegroundColor "Yellow"
+                Start-Sleep -Seconds 2  # Attendre un peu avant de réessayer
+            }
+            
+            $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionPath
+            
+            if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+                Write-ColorOutput "Échec du téléchargement. Nouvelle tentative..." -ForegroundColor "Yellow"
+            }
         }
     }
 
     if ($downloadSuccess) {
-        Write-ColorOutput "Extension téléchargée avec succès." -ForegroundColor "Green"
+        if (-not $extensionExists) {
+            Write-ColorOutput "Extension téléchargée avec succès." -ForegroundColor "Green"
+        }
         
         # Installer l'extension Chrome
         Write-ColorOutput "Installation de l'extension Chrome..." -ForegroundColor "Cyan"
@@ -361,30 +383,38 @@ $iconUrl = "https://www.odoo.com/web/image/res.users/752553/image_1024?unique=a9
 $iconPath = "$installFolder\odoo_pos_icon.ico"
 $tempIconPath = "$tempFolder\odoo_pos_icon.png"
 
-if (Download-File -Url $iconUrl -OutputPath $tempIconPath) {
-    Write-ColorOutput "Icône téléchargée avec succès." -ForegroundColor "Green"
-    
-    # Conversion de l'image en icône (nécessite PowerShell 7 ou supérieur avec le module System.Drawing)
-    try {
-        Add-Type -AssemblyName System.Drawing
-        $image = [System.Drawing.Image]::FromFile($tempIconPath)
-        $icon = [System.Drawing.Icon]::FromHandle($image.GetHicon())
-        $fileStream = New-Object System.IO.FileStream($iconPath, [System.IO.FileMode]::Create)
-        $icon.Save($fileStream)
-        $fileStream.Close()
-        $icon.Dispose()
-        $image.Dispose()
-        Write-ColorOutput "Conversion de l'icône terminée." -ForegroundColor "Green"
-    }
-    catch {
-        Write-ColorOutput "Erreur lors de la conversion de l'icône: $_" -ForegroundColor "Red"
-        Write-ColorOutput "Utilisation d'une icône par défaut..." -ForegroundColor "Yellow"
-        $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icône par défaut de Windows
-    }
+# Vérifier si l'icône existe déjà
+$iconExists = Test-Path $iconPath
+if ($iconExists) {
+    Write-ColorOutput "L'icône existe déjà: $iconPath" -ForegroundColor "Green"
+    Write-ColorOutput "Utilisation de l'icône existante..." -ForegroundColor "Cyan"
 }
 else {
-    Write-ColorOutput "Impossible de télécharger l'icône. Utilisation d'une icône par défaut." -ForegroundColor "Yellow"
-    $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icône par défaut de Windows
+    if (Download-File -Url $iconUrl -OutputPath $tempIconPath) {
+        Write-ColorOutput "Icône téléchargée avec succès." -ForegroundColor "Green"
+        
+        # Conversion de l'image en icône (nécessite PowerShell 7 ou supérieur avec le module System.Drawing)
+        try {
+            Add-Type -AssemblyName System.Drawing
+            $image = [System.Drawing.Image]::FromFile($tempIconPath)
+            $icon = [System.Drawing.Icon]::FromHandle($image.GetHicon())
+            $fileStream = New-Object System.IO.FileStream($iconPath, [System.IO.FileMode]::Create)
+            $icon.Save($fileStream)
+            $fileStream.Close()
+            $icon.Dispose()
+            $image.Dispose()
+            Write-ColorOutput "Conversion de l'icône terminée." -ForegroundColor "Green"
+        }
+        catch {
+            Write-ColorOutput "Erreur lors de la conversion de l'icône: $_" -ForegroundColor "Red"
+            Write-ColorOutput "Utilisation d'une icône par défaut..." -ForegroundColor "Yellow"
+            $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icône par défaut de Windows
+        }
+    }
+    else {
+        Write-ColorOutput "Impossible de télécharger l'icône. Utilisation d'une icône par défaut." -ForegroundColor "Yellow"
+        $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icône par défaut de Windows
+    }
 }
 
 # 6. Créer un raccourci sur le bureau en mode kiosk

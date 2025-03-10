@@ -5,6 +5,13 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2025-03-10
+
+### Amélioré
+- Vérification de l'existence des fichiers avant de tenter de les télécharger
+- Utilisation des fichiers existants si disponibles
+- Meilleure gestion des erreurs et des cas où les fichiers existent déjà
+
 ## [1.0.2] - 2025-03-10
 
 ### Amélioré
