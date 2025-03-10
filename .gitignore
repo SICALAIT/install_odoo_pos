@@ -1,0 +1,38 @@
+# Fichiers temporaires Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Fichiers temporaires PowerShell
+*.ps1.log
+*.ps1.error
+
+# Dossiers temporaires
+temp/
+tmp/
+
+# Fichiers de configuration spécifiques à l'utilisateur
+# Décommentez la ligne suivante si vous ne voulez pas partager votre configuration
+# config.ini
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+*~
+
+# Fichiers de logs
+*.log
+
+# Fichiers d'installation téléchargés
+*.exe
+*.msi
+*.crx
+
+# Fichiers de compilation
+*.dll
+*.pdb
+*.cache
+
+# Dossiers de packages
+packages/
