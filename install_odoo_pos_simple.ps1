@@ -134,9 +134,9 @@ if ($downloadSuccess) {
     $logFile = "$logFolder\cashdrawer.log"
     
     if (-not (Test-Path $logFolder)) {
-        Write-Host "Création du dossier log..." -ForegroundColor Cyan
+        Write-Host "Création du dossier logs..." -ForegroundColor Cyan
         New-Item -ItemType Directory -Path $logFolder -Force | Out-Null
-        Write-Host "Dossier log créé avec succès." -ForegroundColor Green
+        Write-Host "Dossier logs créé avec succès." -ForegroundColor Green
     }
     
     if (-not (Test-Path $logFile)) {
@@ -297,43 +297,30 @@ else {
     Write-Host "Impossible de telecharger ou d'extraire l'extension Chrome. Verifiez votre connexion internet." -ForegroundColor Red
 }
 
-# 5. Telecharger l'icone Odoo POS
-Write-Host "ETAPE 5: Telechargement de l'icone Odoo POS" -ForegroundColor Yellow
+# 5. Utiliser l'icone Odoo POS incluse dans le dépôt
+Write-Host "ETAPE 5: Utilisation de l'icone Odoo POS" -ForegroundColor Yellow
 
-$iconUrl = "https://www.odoo.com/web/image/res.users/752553/image_1024?unique=a98f5c5"
+# Chemin du script actuel
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$iconSourcePath = Join-Path -Path $scriptPath -ChildPath "icon-odoo-POS.ico"
 $iconPath = "$installFolder\odoo_pos_icon.ico"
-$tempIconPath = "$tempFolder\odoo_pos_icon.png"
 
-# Verifier si l'icone existe deja
+# Vérifier si l'icône existe déjà dans le dossier d'installation
 $iconExists = Test-Path $iconPath
 if ($iconExists) {
-    Write-Host "L'icone existe deja: $iconPath" -ForegroundColor Green
+    Write-Host "L'icone existe deja dans le dossier d'installation: $iconPath" -ForegroundColor Green
     Write-Host "Utilisation de l'icone existante..." -ForegroundColor Cyan
 }
 else {
-    if (Download-File -Url $iconUrl -OutputPath $tempIconPath) {
-        Write-Host "Icone telechargee avec succes." -ForegroundColor Green
-    
-        # Conversion de l'image en icone (necessite PowerShell 7 ou superieur avec le module System.Drawing)
-        try {
-            Add-Type -AssemblyName System.Drawing
-            $image = [System.Drawing.Image]::FromFile($tempIconPath)
-            $icon = [System.Drawing.Icon]::FromHandle($image.GetHicon())
-            $fileStream = New-Object System.IO.FileStream($iconPath, [System.IO.FileMode]::Create)
-            $icon.Save($fileStream)
-            $fileStream.Close()
-            $icon.Dispose()
-            $image.Dispose()
-            Write-Host "Conversion de l'icone terminee." -ForegroundColor Green
-        }
-        catch {
-            Write-Host "Erreur lors de la conversion de l'icone: $_" -ForegroundColor Red
-            Write-Host "Utilisation d'une icone par defaut..." -ForegroundColor Yellow
-            $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icone par defaut de Windows
-        }
+    # Vérifier si l'icône source existe
+    if (Test-Path $iconSourcePath) {
+        Write-Host "Copie de l'icone depuis: $iconSourcePath" -ForegroundColor Cyan
+        Copy-Item -Path $iconSourcePath -Destination $iconPath -Force
+        Write-Host "Icone copiée avec succès." -ForegroundColor Green
     }
     else {
-        Write-Host "Impossible de telecharger l'icone. Utilisation d'une icone par defaut." -ForegroundColor Yellow
+        Write-Host "Icone source introuvable: $iconSourcePath" -ForegroundColor Red
+        Write-Host "Utilisation d'une icone par defaut..." -ForegroundColor Yellow
         $iconPath = "$env:SystemRoot\System32\shell32.dll,22"  # Icone par defaut de Windows
     }
 }

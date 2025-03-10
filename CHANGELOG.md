@@ -5,6 +5,12 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.5] - 2025-03-10
+
+### Modifié
+- Changement de la méthode pour la récupération de l'icône : utilisation de l'icône locale incluse dans le dépôt au lieu de la télécharger
+- Renommage du dossier "log" en "logs" pour assurer la compatibilité avec le webservice
+
 ## [1.0.4] - 2025-03-10
 
 ### Corrigé
