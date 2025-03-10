@@ -20,6 +20,19 @@ param(
     [string]$ConfigFile = "config.ini"
 )
 
+# Fonction pour afficher les messages avec couleur
+function Write-ColorOutput {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Message,
+        
+        [Parameter(Mandatory = $false)]
+        [string]$ForegroundColor = "White"
+    )
+    
+    Write-Host $Message -ForegroundColor $ForegroundColor
+}
+
 # Fonction pour lire le fichier de configuration INI
 function Get-IniContent {
     param(
@@ -105,18 +118,6 @@ if ($config["Advanced"]) {
     }
 }
 
-# Fonction pour afficher les messages avec couleur
-function Write-ColorOutput {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Message,
-        
-        [Parameter(Mandatory = $false)]
-        [string]$ForegroundColor = "White"
-    )
-    
-    Write-Host $Message -ForegroundColor $ForegroundColor
-}
 
 # Fonction pour vérifier si l'exécution est en mode administrateur
 function Test-Administrator {

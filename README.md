@@ -24,9 +24,14 @@ Le script effectue automatiquement les opérations suivantes :
 ### Méthode simple
 
 1. Téléchargez tous les fichiers de ce dépôt
-2. Faites un clic droit sur le fichier `install_odoo_pos.ps1` et sélectionnez "Exécuter avec PowerShell"
-3. Si une alerte de sécurité apparaît, cliquez sur "Exécuter quand même"
-4. Suivez les instructions à l'écran
+2. Faites un clic droit sur le fichier `installer_odoo_pos_simple.bat` et sélectionnez "Exécuter en tant qu'administrateur"
+3. Suivez les instructions à l'écran
+
+### Méthode alternative
+
+Si vous rencontrez des problèmes avec le script principal, utilisez les scripts simplifiés :
+- `install_odoo_pos_simple.ps1` : Version sans caractères accentués
+- `installer_odoo_pos_simple.bat` : Lanceur pour la version simplifiée
 
 ### Méthode avancée (avec paramètres personnalisés)
 
@@ -34,6 +39,12 @@ Pour personnaliser l'URL Odoo, ouvrez PowerShell en tant qu'administrateur et ex
 
 ```powershell
 .\install_odoo_pos.ps1 -OdooURL "https://votre-instance-odoo.com"
+```
+
+Ou pour la version simplifiée :
+
+```powershell
+.\install_odoo_pos_simple.ps1 -OdooURL "https://votre-instance-odoo.com"
 ```
 
 ## 🔧 Configuration
@@ -118,6 +129,14 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 ```
 
 Puis relancez le script.
+
+### Problèmes d'encodage des caractères
+
+Si vous rencontrez des problèmes d'affichage des caractères accentués dans la console PowerShell, utilisez les scripts simplifiés :
+- `install_odoo_pos_simple.ps1`
+- `installer_odoo_pos_simple.bat`
+
+Ces versions n'utilisent pas de caractères accentués et sont plus robustes sur différentes configurations Windows.
 
 ### Chrome n'est pas installé correctement
 

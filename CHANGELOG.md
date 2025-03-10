@@ -5,6 +5,18 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-03-10
+
+### Ajouté
+- Scripts simplifiés sans caractères accentués pour éviter les problèmes d'encodage
+  - `install_odoo_pos_simple.ps1` : Version sans caractères accentués
+  - `installer_odoo_pos_simple.bat` : Lanceur pour la version simplifiée
+- Mise à jour de la documentation pour inclure les nouvelles options
+
+### Corrigé
+- Problème d'ordre de définition des fonctions dans le script PowerShell
+- Problèmes d'affichage des caractères accentués dans la console PowerShell
+
 ## [1.0.0] - 2025-03-10
 
 ### Ajouté
@@ -18,6 +30,7 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Gestion des erreurs et affichage coloré des messages
 - Vérification des privilèges administrateur
 - Support pour la personnalisation de l'URL Odoo
+- Fichier de configuration pour personnaliser l'installation
 
 ### Notes techniques
 - Utilisation de PowerShell pour la compatibilité Windows 10/11
