@@ -5,6 +5,16 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2025-03-10
+
+### Amélioré
+- Gestion améliorée des erreurs de téléchargement
+- Ajout de tentatives multiples pour les téléchargements (3 essais)
+- Ajout d'informations détaillées sur les erreurs
+- Option pour continuer l'installation même si le téléchargement du webservice échoue
+- Utilisation de TLS 1.2 pour la sécurité des téléchargements
+- Ajout d'un User-Agent pour éviter les blocages lors des téléchargements
+
 ## [1.0.1] - 2025-03-10
 
 ### Ajouté

@@ -159,13 +159,24 @@ function Download-File {
     Write-ColorOutput "Téléchargement de $Url vers $OutputPath..." -ForegroundColor "Cyan"
     
     try {
+        # Utiliser TLS 1.2 pour la sécurité
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        
         $webClient = New-Object System.Net.WebClient
+        
+        # Ajouter un User-Agent pour éviter les blocages
+        $webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36")
+        
+        # Télécharger le fichier
         $webClient.DownloadFile($Url, $OutputPath)
+        
         Write-ColorOutput "Téléchargement terminé avec succès." -ForegroundColor "Green"
         return $true
     }
     catch {
         Write-ColorOutput "Erreur lors du téléchargement: $_" -ForegroundColor "Red"
+        Write-ColorOutput "Détails de l'erreur: $($_.Exception.InnerException.Message)" -ForegroundColor "Red"
+        Write-ColorOutput "Vérifiez votre connexion internet et que l'URL est correcte." -ForegroundColor "Yellow"
         return $false
     }
 }
@@ -198,7 +209,30 @@ if ($installWebservice) {
     $webservicePath = "$installFolder\cashdrawer_service.exe"
     $webserviceUrl = "https://github.com/ralphi2811/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service.exe"
 
-    if (Download-File -Url $webserviceUrl -OutputPath $webservicePath) {
+    Write-ColorOutput "Tentative de téléchargement depuis: $webserviceUrl" -ForegroundColor "Cyan"
+    Write-ColorOutput "Si le téléchargement échoue, vérifiez que l'URL est correcte et accessible." -ForegroundColor "Yellow"
+
+    # Essayer de télécharger 3 fois avant d'abandonner
+    $maxRetries = 3
+    $retryCount = 0
+    $downloadSuccess = $false
+
+    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+        $retryCount++
+        
+        if ($retryCount -gt 1) {
+            Write-ColorOutput "Tentative $retryCount de $maxRetries..." -ForegroundColor "Yellow"
+            Start-Sleep -Seconds 2  # Attendre un peu avant de réessayer
+        }
+        
+        $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
+        
+        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+            Write-ColorOutput "Échec du téléchargement. Nouvelle tentative..." -ForegroundColor "Yellow"
+        }
+    }
+
+    if ($downloadSuccess) {
         Write-ColorOutput "Webservice téléchargé avec succès." -ForegroundColor "Green"
         
         # Exécuter le webservice une première fois pour valider l'accès
@@ -207,8 +241,22 @@ if ($installWebservice) {
         Write-ColorOutput "Validation du webservice terminée." -ForegroundColor "Green"
     }
     else {
-        Write-ColorOutput "Impossible de télécharger le webservice. Vérifiez votre connexion internet." -ForegroundColor "Red"
-        exit 1
+        Write-ColorOutput "Impossible de télécharger le webservice après $maxRetries tentatives." -ForegroundColor "Red"
+        Write-ColorOutput "Options alternatives:" -ForegroundColor "Yellow"
+        Write-ColorOutput "1. Vérifiez votre connexion internet" -ForegroundColor "White"
+        Write-ColorOutput "2. Téléchargez manuellement le fichier depuis:" -ForegroundColor "White"
+        Write-ColorOutput "   $webserviceUrl" -ForegroundColor "Cyan"
+        Write-ColorOutput "   et placez-le dans: $webservicePath" -ForegroundColor "Cyan"
+        Write-ColorOutput "3. Puis relancez le script" -ForegroundColor "White"
+        
+        $continueWithoutWebservice = Read-Host "Voulez-vous continuer l'installation sans le webservice? (O/N)"
+        if ($continueWithoutWebservice -ne "O" -and $continueWithoutWebservice -ne "o") {
+            Write-ColorOutput "Installation annulée." -ForegroundColor "Red"
+            exit 1
+        }
+        else {
+            Write-ColorOutput "Continuation de l'installation sans le webservice..." -ForegroundColor "Yellow"
+        }
     }
 }
 else {
@@ -247,7 +295,29 @@ if ($installExtension) {
     $extensionPath = "$installFolder\chrome_extention_odoo_pos_cashdrawer.crx"
     $extensionUrl = "https://github.com/ralphi2811/chrome_extention_odoo_pos_cashdrawer/releases/download/1.0/chrome_extention_odoo_pos_cashdrawer.crx"
 
-    if (Download-File -Url $extensionUrl -OutputPath $extensionPath) {
+    Write-ColorOutput "Tentative de téléchargement depuis: $extensionUrl" -ForegroundColor "Cyan"
+
+    # Essayer de télécharger 3 fois avant d'abandonner
+    $maxRetries = 3
+    $retryCount = 0
+    $downloadSuccess = $false
+
+    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+        $retryCount++
+        
+        if ($retryCount -gt 1) {
+            Write-ColorOutput "Tentative $retryCount de $maxRetries..." -ForegroundColor "Yellow"
+            Start-Sleep -Seconds 2  # Attendre un peu avant de réessayer
+        }
+        
+        $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionPath
+        
+        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+            Write-ColorOutput "Échec du téléchargement. Nouvelle tentative..." -ForegroundColor "Yellow"
+        }
+    }
+
+    if ($downloadSuccess) {
         Write-ColorOutput "Extension téléchargée avec succès." -ForegroundColor "Green"
         
         # Installer l'extension Chrome
