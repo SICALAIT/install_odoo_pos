@@ -129,8 +129,8 @@ if ($downloadSuccess) {
         Write-Host "Webservice telecharge avec succes." -ForegroundColor Green
     }
     
-    # Créer le dossier log et le fichier cashdrawer.log nécessaires au webservice
-    $logFolder = "$installFolder\log"
+    # Créer le dossier logs et le fichier cashdrawer.log nécessaires au webservice
+    $logFolder = "$installFolder\logs"
     $logFile = "$logFolder\cashdrawer.log"
     
     if (-not (Test-Path $logFolder)) {
