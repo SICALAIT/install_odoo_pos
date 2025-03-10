@@ -129,10 +129,43 @@ if ($downloadSuccess) {
         Write-Host "Webservice telecharge avec succes." -ForegroundColor Green
     }
     
+    # Créer le dossier log et le fichier cashdrawer.log nécessaires au webservice
+    $logFolder = "$installFolder\log"
+    $logFile = "$logFolder\cashdrawer.log"
+    
+    if (-not (Test-Path $logFolder)) {
+        Write-Host "Création du dossier log..." -ForegroundColor Cyan
+        New-Item -ItemType Directory -Path $logFolder -Force | Out-Null
+        Write-Host "Dossier log créé avec succès." -ForegroundColor Green
+    }
+    
+    if (-not (Test-Path $logFile)) {
+        Write-Host "Création du fichier cashdrawer.log..." -ForegroundColor Cyan
+        New-Item -ItemType File -Path $logFile -Force | Out-Null
+        Write-Host "Fichier cashdrawer.log créé avec succès." -ForegroundColor Green
+    }
+    
     # Executer le webservice une premiere fois pour valider l'acces
     Write-Host "Lancement du webservice pour la premiere fois pour valider l'acces..." -ForegroundColor Cyan
-    Start-Process -FilePath $webservicePath -Wait
-    Write-Host "Validation du webservice terminee." -ForegroundColor Green
+    $webserviceProcess = Start-Process -FilePath $webservicePath -PassThru
+    
+    # Attendre quelques secondes pour que le webservice démarre
+    Start-Sleep -Seconds 5
+    
+    # Vérifier si le processus est toujours en cours d'exécution
+    if (Get-Process -Id $webserviceProcess.Id -ErrorAction SilentlyContinue) {
+        Write-Host "Le webservice a démarré avec succès." -ForegroundColor Green
+        
+        # Arrêter le processus pour continuer l'installation
+        Write-Host "Arrêt du webservice pour continuer l'installation..." -ForegroundColor Cyan
+        Stop-Process -Id $webserviceProcess.Id -Force
+        Write-Host "Webservice arrêté. Il sera redémarré automatiquement au prochain démarrage." -ForegroundColor Green
+    } else {
+        Write-Host "Le webservice semble s'être arrêté de manière inattendue." -ForegroundColor Yellow
+        Write-Host "Vérifiez les journaux pour plus d'informations." -ForegroundColor Yellow
+    }
+    
+    Write-Host "Validation du webservice terminée." -ForegroundColor Green
 }
 else {
     Write-Host "Impossible de telecharger le webservice apres $maxRetries tentatives." -ForegroundColor Red
