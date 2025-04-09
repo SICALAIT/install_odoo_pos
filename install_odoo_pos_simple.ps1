@@ -297,6 +297,92 @@ else {
     Write-Host "Impossible de telecharger ou d'extraire l'extension Chrome. Verifiez votre connexion internet." -ForegroundColor Red
 }
 
+# 4b. Telecharger et installer l'extension Chrome pour l'échéancier
+Write-Host "ETAPE 4b: Installation de l'extension Chrome pour l'échéancier" -ForegroundColor Yellow
+
+$echeancierZipPath = "$tempFolder\chrome_extension_odoo_pos_echeancier.zip"
+$echeancierUrl = "https://github.com/SICALAIT/chrome_extension_odoo_pos_echeancier/archive/refs/tags/1.0.0.zip"
+$echeancierExtractPath = "$installFolder\chrome_extension_odoo_pos_echeancier"
+
+# Verifier si le dossier d'extension existe deja
+$echeancierExists = Test-Path $echeancierExtractPath
+if ($echeancierExists) {
+    Write-Host "Le dossier d'extension pour l'échéancier existe deja: $echeancierExtractPath" -ForegroundColor Green
+    Write-Host "Utilisation de l'extension existante..." -ForegroundColor Cyan
+    $echeancierDownloadSuccess = $true
+}
+else {
+    Write-Host "Tentative de telechargement depuis: $echeancierUrl" -ForegroundColor Cyan
+
+    # Essayer de telecharger 3 fois avant d'abandonner
+    $maxRetries = 3
+    $retryCount = 0
+    $echeancierDownloadSuccess = $false
+
+    while (-not $echeancierDownloadSuccess -and $retryCount -lt $maxRetries) {
+        $retryCount++
+        
+        if ($retryCount -gt 1) {
+            Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
+            Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
+        }
+        
+        $echeancierDownloadSuccess = Download-File -Url $echeancierUrl -OutputPath $echeancierZipPath
+        
+        if (-not $echeancierDownloadSuccess -and $retryCount -lt $maxRetries) {
+            Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+        }
+    }
+
+    if ($echeancierDownloadSuccess) {
+        Write-Host "Extension échéancier telechargee avec succes." -ForegroundColor Green
+        
+        # Extraire le fichier ZIP
+        Write-Host "Extraction de l'extension échéancier..." -ForegroundColor Cyan
+        
+        try {
+            # Créer le dossier d'extraction s'il n'existe pas
+            if (-not (Test-Path $echeancierExtractPath)) {
+                New-Item -ItemType Directory -Path $echeancierExtractPath -Force | Out-Null
+            }
+            
+            # Extraire le ZIP
+            Add-Type -AssemblyName System.IO.Compression.FileSystem
+            [System.IO.Compression.ZipFile]::ExtractToDirectory($echeancierZipPath, $tempFolder)
+            
+            # Le ZIP extrait crée un dossier avec le nom du projet et le tag, déplacer son contenu
+            $extractedFolder = Get-ChildItem -Path $tempFolder -Directory | Where-Object { $_.Name -like "chrome_extension_odoo_pos_echeancier*" } | Select-Object -First 1
+            
+            if ($extractedFolder) {
+                # Copier le contenu du dossier extrait vers le dossier d'installation
+                Copy-Item -Path "$($extractedFolder.FullName)\*" -Destination $echeancierExtractPath -Recurse -Force
+                Write-Host "Extension échéancier extraite avec succes dans: $echeancierExtractPath" -ForegroundColor Green
+            } else {
+                Write-Host "Impossible de trouver le dossier extrait pour l'extension échéancier." -ForegroundColor Red
+                $echeancierDownloadSuccess = $false
+            }
+        }
+        catch {
+            Write-Host "Erreur lors de l'extraction de l'extension échéancier: $_" -ForegroundColor Red
+            $echeancierDownloadSuccess = $false
+        }
+    }
+}
+
+if ($echeancierDownloadSuccess) {
+    # Instructions pour installer l'extension non empaquetée
+    Write-Host "Pour installer l'extension échéancier, veuillez suivre ces etapes manuelles:" -ForegroundColor Magenta
+    Write-Host "1. Ouvrez Chrome" -ForegroundColor White
+    Write-Host "2. Allez a chrome://extensions/" -ForegroundColor White
+    Write-Host "3. Activez le 'Mode developpeur' en haut a droite" -ForegroundColor White
+    Write-Host "4. Cliquez sur 'Charger l'extension non empaquetee'" -ForegroundColor White
+    Write-Host "5. Naviguez et selectionnez le dossier suivant:" -ForegroundColor White
+    Write-Host "   $echeancierExtractPath" -ForegroundColor Cyan
+}
+else {
+    Write-Host "Impossible de telecharger ou d'extraire l'extension Chrome pour l'échéancier. Verifiez votre connexion internet." -ForegroundColor Red
+}
+
 # 5. Utiliser l'icone Odoo POS incluse dans le dépôt
 Write-Host "ETAPE 5: Utilisation de l'icone Odoo POS" -ForegroundColor Yellow
 

@@ -5,6 +5,15 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2025-04-09
+
+### Modifié
+- Mise à jour de l'URL Odoo POS dans tous les fichiers de configuration pour utiliser l'URL de redirection (https://redirect.groupe-sicalait.fr/5NjIN)
+- Modification de l'URL de l'extension Chrome du tiroir-caisse pour utiliser le dépôt SICALAIT au lieu du dépôt ralphi2811
+
+### Ajouté
+- Installation d'une nouvelle extension Chrome pour l'échéancier depuis le dépôt SICALAIT
+
 ## [1.0.5] - 2025-03-10
 
 ### Modifié
