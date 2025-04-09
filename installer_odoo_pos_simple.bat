@@ -22,7 +22,7 @@ echo Execution du script d'installation...
 echo.
 
 :: Definir l'URL Odoo (peut etre modifiee ici)
-set ODOO_URL=https://sdpmajdb-odoo17-dev-staging-sicalait-18269676.dev.odoo.com/
+set ODOO_URL=https://redirect.groupe-sicalait.fr/5NjIN
 
 :: Executer le script PowerShell avec bypass de la politique d'execution
 powershell -ExecutionPolicy Bypass -File "%~dp0install_odoo_pos_simple.ps1" -OdooURL "%ODOO_URL%"

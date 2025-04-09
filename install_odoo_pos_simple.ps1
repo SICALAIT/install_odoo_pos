@@ -16,7 +16,7 @@
 
 # Configuration
 param(
-    [string]$OdooURL = "https://sdpmajdb-odoo17-dev-staging-sicalait-18269676.dev.odoo.com/"
+    [string]$OdooURL = "https://redirect.groupe-sicalait.fr/5NjIN"
 )
 
 # Verifier si le script est execute en tant qu'administrateur
