@@ -210,7 +210,7 @@ Write-Host "Tache planifiee creee avec succes." -ForegroundColor Green
 Write-Host "ETAPE 4: Installation de l'extension Chrome" -ForegroundColor Yellow
 
 $extensionZipPath = "$tempFolder\chrome_extension_odoo_pos_cashdrawer.zip"
-$extensionUrl = "https://github.com/ralphi2811/chrome_extention_odoo_pos_cashdrawer/archive/refs/tags/1.0.zip"
+$extensionUrl = "https://github.com/SICALAIT/chrome_extention_odoo_pos_cashdrawer/archive/refs/tags/1.0.zip"
 $extensionExtractPath = "$installFolder\chrome_extension_odoo_pos_cashdrawer"
 
 # Verifier si le dossier d'extension existe deja
