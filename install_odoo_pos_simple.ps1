@@ -411,11 +411,11 @@ else {
     }
 }
 
-# 6. Creer un raccourci sur le bureau en mode kiosk
-Write-Host "ETAPE 6: Creation du raccourci sur le bureau" -ForegroundColor Yellow
+# 6. Creer un raccourci sur le bureau public (accessible à tous les utilisateurs)
+Write-Host "ETAPE 6: Creation du raccourci sur le bureau public" -ForegroundColor Yellow
 
-$desktopPath = [Environment]::GetFolderPath("Desktop")
-$shortcutPath = "$desktopPath\Odoo POS.lnk"
+$publicDesktopPath = "$env:PUBLIC\Desktop"
+$shortcutPath = "$publicDesktopPath\Odoo POS.lnk"
 $chromePath = "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe"
 if (-not (Test-Path $chromePath)) {
     $chromePath = "$env:ProgramFiles\Google\Chrome\Application\chrome.exe"
