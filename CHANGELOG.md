@@ -5,6 +5,14 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2025-04-15
+
+### Modifié
+- Modification du script PowerShell pour créer le raccourci sur le bureau public (`$env:PUBLIC\Desktop`) au lieu du bureau de l'administrateur, rendant le raccourci accessible à tous les utilisateurs de la machine
+- Amélioration du script batch pour télécharger automatiquement la dernière version depuis GitHub, l'extraire et exécuter le script PowerShell depuis le dossier extrait
+- Ajout de la gestion d'erreur dans le script batch pour les étapes de téléchargement et d'extraction
+- Nettoyage automatique des fichiers temporaires après l'installation
+
 ## [1.0.6] - 2025-04-09
 
 ### Modifié
