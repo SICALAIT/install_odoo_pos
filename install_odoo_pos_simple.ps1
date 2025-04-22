@@ -90,7 +90,7 @@ else {
 Write-Host "ETAPE 2: Installation du webservice cashdrawer" -ForegroundColor Yellow
 
 $webservicePath = "$installFolder\cashdrawer_service.exe"
-$webserviceUrl = "https://github.com/SICALAIT/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service.exe"
+$webserviceUrl = "https://github.com/SICALAIT/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service_v1.0.0.exe"
 
 # Verifier si le fichier existe deja
 $webserviceExists = Test-Path $webservicePath
