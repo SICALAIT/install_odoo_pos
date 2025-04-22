@@ -5,6 +5,12 @@ Toutes les modifications notables apportées à ce projet seront documentées da
 Le format est basé sur [Keep a Changelog](https://keepachangelog.com/fr/1.0.0/),
 et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2025-04-22
+
+### Modifié
+- Changement de l'adresse de récupération de l'exécutable du webservice vers le dépôt SICALAIT
+- Modification du dossier d'installation de "$env:ProgramFiles\OdooPOS" à "C:\OdooPOS" pour une meilleure compatibilité et un accès plus direct aux fichiers
+
 ## [1.0.7] - 2025-04-15
 
 ### Modifié

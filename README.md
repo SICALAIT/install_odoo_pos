@@ -106,6 +106,10 @@ AdditionalChromeArgs=--disable-translate --disable-infobars --noerrdialogs --dis
 
 ## 📝 Notes importantes
 
+### Dossier d'installation
+
+Le script installe maintenant tous les composants dans le dossier `C:\OdooPOS` au lieu de `%ProgramFiles%\OdooPOS`. Ce changement offre une meilleure compatibilité et un accès plus direct aux fichiers d'installation, notamment pour les utilisateurs sans droits administrateur qui pourraient avoir besoin d'accéder aux fichiers.
+
 ### Installation de l'extension Chrome
 
 En raison des restrictions de sécurité de Chrome, l'installation automatique de l'extension nécessite des étapes manuelles. Le script télécharge l'extension et fournit des instructions détaillées pour l'installation.
