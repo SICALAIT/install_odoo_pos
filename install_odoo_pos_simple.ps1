@@ -475,7 +475,20 @@ Write-Host "Raccourci cree avec succes sur le bureau." -ForegroundColor Green
 Write-Host "Nettoyage des fichiers temporaires..." -ForegroundColor Cyan
 Remove-Item -Path $tempFolder -Recurse -Force -ErrorAction SilentlyContinue
 
+# Ouvrir le navigateur sur la page de configuration du webservice
+Write-Host "Ouverture de l'assistant de configuration du webservice..." -ForegroundColor Yellow
+$configUrl = "http://localhost:22548/config"
+try {
+    Start-Process "chrome.exe" -ArgumentList $configUrl
+    Write-Host "Navigateur ouvert sur $configUrl" -ForegroundColor Green
+}
+catch {
+    Write-Host "Impossible d'ouvrir automatiquement le navigateur. Veuillez ouvrir manuellement l'URL suivante:" -ForegroundColor Red
+    Write-Host "   $configUrl" -ForegroundColor Cyan
+}
+
 # Fin de l'installation
 Write-Host "Installation terminee avec succes!" -ForegroundColor Green
 Write-Host "Vous pouvez maintenant lancer Odoo POS en mode kiosk en utilisant le raccourci sur le bureau." -ForegroundColor White
 Write-Host "URL configuree: $OdooURL" -ForegroundColor Cyan
+Write-Host "URL de configuration du webservice: $configUrl" -ForegroundColor Cyan
