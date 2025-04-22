@@ -38,6 +38,44 @@ if (-not (Test-Path $installFolder)) {
     New-Item -ItemType Directory -Path $installFolder -Force | Out-Null
 }
 
+# Verifier si le webservice est deja en cours d'execution et l'arreter si necessaire
+$webserviceName = "cashdrawer_service"
+$runningWebservice = Get-Process -Name $webserviceName -ErrorAction SilentlyContinue
+if ($runningWebservice) {
+    Write-Host "Le webservice est deja en cours d'execution. Arret du processus..." -ForegroundColor Yellow
+    try {
+        Stop-Process -Name $webserviceName -Force
+        Write-Host "Webservice arrete avec succes." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Erreur lors de l'arret du webservice: $_" -ForegroundColor Red
+        Write-Host "Tentative d'arret avec une methode alternative..." -ForegroundColor Yellow
+        
+        # Methode alternative pour arreter le processus
+        taskkill /F /IM "$webserviceName.exe" 2>$null
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "Webservice arrete avec succes (methode alternative)." -ForegroundColor Green
+        }
+        else {
+            Write-Host "Impossible d'arreter le webservice. Veuillez le fermer manuellement avant de continuer." -ForegroundColor Red
+        }
+    }
+}
+
+# Verifier si la tache planifiee existe et la supprimer
+$taskName = "OdooPOSCashdrawerService"
+$taskExists = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
+if ($taskExists) {
+    Write-Host "Suppression de la tache planifiee existante..." -ForegroundColor Yellow
+    try {
+        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false
+        Write-Host "Tache planifiee supprimee avec succes." -ForegroundColor Green
+    }
+    catch {
+        Write-Host "Erreur lors de la suppression de la tache planifiee: $_" -ForegroundColor Red
+    }
+}
+
 # Fonction pour telecharger un fichier
 function Download-File {
     param(

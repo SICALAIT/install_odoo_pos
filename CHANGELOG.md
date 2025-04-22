@@ -12,6 +12,10 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Mise à jour de l'URL du webservice pour utiliser le fichier cashdrawer_service_v1.0.0.exe
 - Modification du dossier d'installation de "$env:ProgramFiles\OdooPOS" à "C:\OdooPOS" pour une meilleure compatibilité et un accès plus direct aux fichiers
 
+### Ajouté
+- Vérification au démarrage du script si le webservice est déjà en cours d'exécution et arrêt automatique si nécessaire
+- Suppression automatique de la tâche planifiée existante avant d'en créer une nouvelle lors d'une mise à jour
+
 ## [1.0.7] - 2025-04-15
 
 ### Modifié
