@@ -130,35 +130,35 @@ Write-Host "ETAPE 2: Installation du webservice cashdrawer" -ForegroundColor Yel
 $webservicePath = "$installFolder\cashdrawer_service.exe"
 $webserviceUrl = "https://github.com/SICALAIT/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service_v1.0.0.exe"
 
-# Verifier si le fichier existe deja
+# Verifier si le fichier existe deja et le supprimer pour le mettre à jour
 $webserviceExists = Test-Path $webservicePath
 if ($webserviceExists) {
-    Write-Host "Le fichier webservice existe deja: $webservicePath" -ForegroundColor Green
-    Write-Host "Utilisation du fichier existant..." -ForegroundColor Cyan
-    $downloadSuccess = $true
-} 
-else {
-    Write-Host "Tentative de telechargement depuis: $webserviceUrl" -ForegroundColor Cyan
-    Write-Host "Si le telechargement echoue, verifiez que l'URL est correcte et accessible." -ForegroundColor Yellow
+    Write-Host "Le fichier webservice existe deja: $webservicePath" -ForegroundColor Yellow
+    Write-Host "Suppression du fichier existant pour mise à jour..." -ForegroundColor Cyan
+    Remove-Item -Path $webservicePath -Force
+}
 
-    # Essayer de telecharger 3 fois avant d'abandonner
-    $maxRetries = 3
-    $retryCount = 0
-    $downloadSuccess = $false
+# Téléchargement du webservice
+Write-Host "Tentative de telechargement depuis: $webserviceUrl" -ForegroundColor Cyan
+Write-Host "Si le telechargement echoue, verifiez que l'URL est correcte et accessible." -ForegroundColor Yellow
 
-    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-        $retryCount++
-        
-        if ($retryCount -gt 1) {
-            Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
-            Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
-        }
-        
-        $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
-        
-        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-            Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
-        }
+# Essayer de telecharger 3 fois avant d'abandonner
+$maxRetries = 3
+$retryCount = 0
+$downloadSuccess = $false
+
+while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+    $retryCount++
+    
+    if ($retryCount -gt 1) {
+        Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
+    }
+    
+    $downloadSuccess = Download-File -Url $webserviceUrl -OutputPath $webservicePath
+    
+    if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+        Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
     }
 }
 
@@ -251,68 +251,68 @@ $extensionZipPath = "$tempFolder\chrome_extension_odoo_pos_cashdrawer.zip"
 $extensionUrl = "https://github.com/SICALAIT/chrome_extention_odoo_pos_cashdrawer/archive/refs/tags/1.0.zip"
 $extensionExtractPath = "$installFolder\chrome_extension_odoo_pos_cashdrawer"
 
-# Verifier si le dossier d'extension existe deja
+# Verifier si le dossier d'extension existe deja et le supprimer pour le mettre à jour
 $extensionExists = Test-Path $extensionExtractPath
 if ($extensionExists) {
-    Write-Host "Le dossier d'extension existe deja: $extensionExtractPath" -ForegroundColor Green
-    Write-Host "Utilisation de l'extension existante..." -ForegroundColor Cyan
-    $downloadSuccess = $true
+    Write-Host "Le dossier d'extension existe deja: $extensionExtractPath" -ForegroundColor Yellow
+    Write-Host "Suppression du dossier existant pour mise à jour..." -ForegroundColor Cyan
+    Remove-Item -Path $extensionExtractPath -Recurse -Force
 }
-else {
-    Write-Host "Tentative de telechargement depuis: $extensionUrl" -ForegroundColor Cyan
 
-    # Essayer de telecharger 3 fois avant d'abandonner
-    $maxRetries = 3
-    $retryCount = 0
-    $downloadSuccess = $false
+# Téléchargement de l'extension
+Write-Host "Tentative de telechargement depuis: $extensionUrl" -ForegroundColor Cyan
 
-    while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-        $retryCount++
-        
-        if ($retryCount -gt 1) {
-            Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
-            Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
-        }
-        
-        $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionZipPath
-        
-        if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
-            Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
-        }
+# Essayer de telecharger 3 fois avant d'abandonner
+$maxRetries = 3
+$retryCount = 0
+$downloadSuccess = $false
+
+while (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+    $retryCount++
+    
+    if ($retryCount -gt 1) {
+        Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
     }
+    
+    $downloadSuccess = Download-File -Url $extensionUrl -OutputPath $extensionZipPath
+    
+    if (-not $downloadSuccess -and $retryCount -lt $maxRetries) {
+        Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+    }
+}
 
-    if ($downloadSuccess) {
-        Write-Host "Extension telechargee avec succes." -ForegroundColor Green
-        
-        # Extraire le fichier ZIP
-        Write-Host "Extraction de l'extension..." -ForegroundColor Cyan
-        
-        try {
-            # Créer le dossier d'extraction s'il n'existe pas
-            if (-not (Test-Path $extensionExtractPath)) {
-                New-Item -ItemType Directory -Path $extensionExtractPath -Force | Out-Null
-            }
-            
-            # Extraire le ZIP
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
-            [System.IO.Compression.ZipFile]::ExtractToDirectory($extensionZipPath, $tempFolder)
-            
-            # Le ZIP extrait crée un dossier avec le nom du projet et le tag, déplacer son contenu
-            $extractedFolder = Get-ChildItem -Path $tempFolder -Directory | Where-Object { $_.Name -like "chrome_extention_odoo_pos_cashdrawer*" } | Select-Object -First 1
-            
-            if ($extractedFolder) {
-                # Copier le contenu du dossier extrait vers le dossier d'installation
-                Copy-Item -Path "$($extractedFolder.FullName)\*" -Destination $extensionExtractPath -Recurse -Force
-                Write-Host "Extension extraite avec succes dans: $extensionExtractPath" -ForegroundColor Green
-            } else {
-                Write-Host "Impossible de trouver le dossier extrait." -ForegroundColor Red
-                $downloadSuccess = $false
-            }
+if ($downloadSuccess) {
+    Write-Host "Extension telechargee avec succes." -ForegroundColor Green
+    
+    # Extraire le fichier ZIP
+    Write-Host "Extraction de l'extension..." -ForegroundColor Cyan
+    
+    try {
+        # Créer le dossier d'extraction s'il n'existe pas
+        if (-not (Test-Path $extensionExtractPath)) {
+            New-Item -ItemType Directory -Path $extensionExtractPath -Force | Out-Null
         }
-        catch {
-            Write-Host "Erreur lors de l'extraction de l'extension: $_" -ForegroundColor Red
+        
+        # Extraire le ZIP
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($extensionZipPath, $tempFolder)
+        
+        # Le ZIP extrait crée un dossier avec le nom du projet et le tag, déplacer son contenu
+        $extractedFolder = Get-ChildItem -Path $tempFolder -Directory | Where-Object { $_.Name -like "chrome_extention_odoo_pos_cashdrawer*" } | Select-Object -First 1
+        
+        if ($extractedFolder) {
+            # Copier le contenu du dossier extrait vers le dossier d'installation
+            Copy-Item -Path "$($extractedFolder.FullName)\*" -Destination $extensionExtractPath -Recurse -Force
+            Write-Host "Extension extraite avec succes dans: $extensionExtractPath" -ForegroundColor Green
+        } else {
+            Write-Host "Impossible de trouver le dossier extrait." -ForegroundColor Red
             $downloadSuccess = $false
         }
+    }
+    catch {
+        Write-Host "Erreur lors de l'extraction de l'extension: $_" -ForegroundColor Red
+        $downloadSuccess = $false
     }
 }
 
@@ -342,68 +342,68 @@ $echeancierZipPath = "$tempFolder\chrome_extension_odoo_pos_echeancier.zip"
 $echeancierUrl = "https://github.com/SICALAIT/chrome_extension_odoo_pos_echeancier/archive/refs/tags/1.0.0.zip"
 $echeancierExtractPath = "$installFolder\chrome_extension_odoo_pos_echeancier"
 
-# Verifier si le dossier d'extension existe deja
+# Verifier si le dossier d'extension existe deja et le supprimer pour le mettre à jour
 $echeancierExists = Test-Path $echeancierExtractPath
 if ($echeancierExists) {
-    Write-Host "Le dossier d'extension pour l'échéancier existe deja: $echeancierExtractPath" -ForegroundColor Green
-    Write-Host "Utilisation de l'extension existante..." -ForegroundColor Cyan
-    $echeancierDownloadSuccess = $true
+    Write-Host "Le dossier d'extension pour l'échéancier existe deja: $echeancierExtractPath" -ForegroundColor Yellow
+    Write-Host "Suppression du dossier existant pour mise à jour..." -ForegroundColor Cyan
+    Remove-Item -Path $echeancierExtractPath -Recurse -Force
 }
-else {
-    Write-Host "Tentative de telechargement depuis: $echeancierUrl" -ForegroundColor Cyan
 
-    # Essayer de telecharger 3 fois avant d'abandonner
-    $maxRetries = 3
-    $retryCount = 0
-    $echeancierDownloadSuccess = $false
+# Téléchargement de l'extension pour l'échéancier
+Write-Host "Tentative de telechargement depuis: $echeancierUrl" -ForegroundColor Cyan
 
-    while (-not $echeancierDownloadSuccess -and $retryCount -lt $maxRetries) {
-        $retryCount++
-        
-        if ($retryCount -gt 1) {
-            Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
-            Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
-        }
-        
-        $echeancierDownloadSuccess = Download-File -Url $echeancierUrl -OutputPath $echeancierZipPath
-        
-        if (-not $echeancierDownloadSuccess -and $retryCount -lt $maxRetries) {
-            Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
-        }
+# Essayer de telecharger 3 fois avant d'abandonner
+$maxRetries = 3
+$retryCount = 0
+$echeancierDownloadSuccess = $false
+
+while (-not $echeancierDownloadSuccess -and $retryCount -lt $maxRetries) {
+    $retryCount++
+    
+    if ($retryCount -gt 1) {
+        Write-Host "Tentative $retryCount de $maxRetries..." -ForegroundColor Yellow
+        Start-Sleep -Seconds 2  # Attendre un peu avant de reessayer
     }
+    
+    $echeancierDownloadSuccess = Download-File -Url $echeancierUrl -OutputPath $echeancierZipPath
+    
+    if (-not $echeancierDownloadSuccess -and $retryCount -lt $maxRetries) {
+        Write-Host "Echec du telechargement. Nouvelle tentative..." -ForegroundColor Yellow
+    }
+}
 
-    if ($echeancierDownloadSuccess) {
-        Write-Host "Extension échéancier telechargee avec succes." -ForegroundColor Green
-        
-        # Extraire le fichier ZIP
-        Write-Host "Extraction de l'extension échéancier..." -ForegroundColor Cyan
-        
-        try {
-            # Créer le dossier d'extraction s'il n'existe pas
-            if (-not (Test-Path $echeancierExtractPath)) {
-                New-Item -ItemType Directory -Path $echeancierExtractPath -Force | Out-Null
-            }
-            
-            # Extraire le ZIP
-            Add-Type -AssemblyName System.IO.Compression.FileSystem
-            [System.IO.Compression.ZipFile]::ExtractToDirectory($echeancierZipPath, $tempFolder)
-            
-            # Le ZIP extrait crée un dossier avec le nom du projet et le tag, déplacer son contenu
-            $extractedFolder = Get-ChildItem -Path $tempFolder -Directory | Where-Object { $_.Name -like "chrome_extension_odoo_pos_echeancier*" } | Select-Object -First 1
-            
-            if ($extractedFolder) {
-                # Copier le contenu du dossier extrait vers le dossier d'installation
-                Copy-Item -Path "$($extractedFolder.FullName)\*" -Destination $echeancierExtractPath -Recurse -Force
-                Write-Host "Extension échéancier extraite avec succes dans: $echeancierExtractPath" -ForegroundColor Green
-            } else {
-                Write-Host "Impossible de trouver le dossier extrait pour l'extension échéancier." -ForegroundColor Red
-                $echeancierDownloadSuccess = $false
-            }
+if ($echeancierDownloadSuccess) {
+    Write-Host "Extension échéancier telechargee avec succes." -ForegroundColor Green
+    
+    # Extraire le fichier ZIP
+    Write-Host "Extraction de l'extension échéancier..." -ForegroundColor Cyan
+    
+    try {
+        # Créer le dossier d'extraction s'il n'existe pas
+        if (-not (Test-Path $echeancierExtractPath)) {
+            New-Item -ItemType Directory -Path $echeancierExtractPath -Force | Out-Null
         }
-        catch {
-            Write-Host "Erreur lors de l'extraction de l'extension échéancier: $_" -ForegroundColor Red
+        
+        # Extraire le ZIP
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($echeancierZipPath, $tempFolder)
+        
+        # Le ZIP extrait crée un dossier avec le nom du projet et le tag, déplacer son contenu
+        $extractedFolder = Get-ChildItem -Path $tempFolder -Directory | Where-Object { $_.Name -like "chrome_extension_odoo_pos_echeancier*" } | Select-Object -First 1
+        
+        if ($extractedFolder) {
+            # Copier le contenu du dossier extrait vers le dossier d'installation
+            Copy-Item -Path "$($extractedFolder.FullName)\*" -Destination $echeancierExtractPath -Recurse -Force
+            Write-Host "Extension échéancier extraite avec succes dans: $echeancierExtractPath" -ForegroundColor Green
+        } else {
+            Write-Host "Impossible de trouver le dossier extrait pour l'extension échéancier." -ForegroundColor Red
             $echeancierDownloadSuccess = $false
         }
+    }
+    catch {
+        Write-Host "Erreur lors de l'extraction de l'extension échéancier: $_" -ForegroundColor Red
+        $echeancierDownloadSuccess = $false
     }
 }
 
