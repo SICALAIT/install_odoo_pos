@@ -32,8 +32,8 @@ if (-not (Test-Path $tempFolder)) {
     New-Item -ItemType Directory -Path $tempFolder -Force | Out-Null
 }
 
-# Creer un dossier d'installation
-$installFolder = "$env:ProgramFiles\OdooPOS"
+# Creer un dossier d'installation à la racine de C:
+$installFolder = "C:\OdooPOS"
 if (-not (Test-Path $installFolder)) {
     New-Item -ItemType Directory -Path $installFolder -Force | Out-Null
 }
@@ -90,7 +90,7 @@ else {
 Write-Host "ETAPE 2: Installation du webservice cashdrawer" -ForegroundColor Yellow
 
 $webservicePath = "$installFolder\cashdrawer_service.exe"
-$webserviceUrl = "https://github.com/ralphi2811/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service.exe"
+$webserviceUrl = "https://github.com/SICALAIT/odoo_pos_cashdrawer_webservice/releases/download/v1.0.0/cashdrawer_service.exe"
 
 # Verifier si le fichier existe deja
 $webserviceExists = Test-Path $webservicePath
