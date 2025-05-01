@@ -9,8 +9,11 @@ Le script effectue automatiquement les opérations suivantes :
 - ✅ Téléchargement et installation silencieuse de Google Chrome
 - ✅ Téléchargement du webservice pour le tiroir-caisse
 - ✅ Configuration d'une tâche planifiée pour lancer le webservice au démarrage
-- ✅ Téléchargement et instructions pour l'installation de l'extension Chrome
-- ✅ Création d'un raccourci sur le bureau en mode kiosk avec l'URL Odoo configurée
+- ✅ Téléchargement et instructions pour l'installation des extensions Chrome :
+  - Extension pour le tiroir-caisse
+  - Extension pour l'échéancier
+- ✅ Création d'un raccourci sur le bureau public en mode kiosk avec l'URL Odoo configurée
+- ✅ Ouverture automatique de l'assistant de configuration du webservice
 
 ## 🚀 Prérequis
 
@@ -55,7 +58,7 @@ Le script PowerShell accepte les paramètres suivants :
 
 | Paramètre  | Description | Valeur par défaut |
 |------------|-------------|-------------------|
-| OdooURL    | URL de l'instance Odoo POS | https://sdpmajdb-odoo17-dev-staging-sicalait-18269676.dev.odoo.com/ |
+| OdooURL    | URL de l'instance Odoo POS | https://redirect.groupe-sicalait.fr/5NjIN |
 | ConfigFile | Chemin vers le fichier de configuration | config.ini |
 
 ### Fichier de configuration
@@ -68,7 +71,7 @@ Pour une personnalisation plus avancée, vous pouvez modifier le fichier `config
 
 [General]
 ; URL de l'instance Odoo POS
-OdooURL=https://sdpmajdb-odoo17-dev-staging-sicalait-18269676.dev.odoo.com/
+OdooURL=https://redirect.groupe-sicalait.fr/5NjIN
 
 [Options]
 ; Activer/désactiver certaines fonctionnalités (true/false)
@@ -94,7 +97,7 @@ AdditionalChromeArgs=--disable-translate --disable-infobars --noerrdialogs --dis
 
 | Section  | Option               | Description                                       | Valeur par défaut |
 |----------|----------------------|---------------------------------------------------|-------------------|
-| General  | OdooURL              | URL de l'instance Odoo POS                        | https://sdpmajdb-odoo17-dev-staging-sicalait-18269676.dev.odoo.com/ |
+| General  | OdooURL              | URL de l'instance Odoo POS                        | https://redirect.groupe-sicalait.fr/5NjIN |
 | Options  | InstallChrome        | Installer Google Chrome                           | true |
 | Options  | InstallWebservice    | Installer le webservice pour le tiroir-caisse     | true |
 | Options  | CreateScheduledTask  | Créer une tâche planifiée pour le webservice      | true |
@@ -110,9 +113,12 @@ AdditionalChromeArgs=--disable-translate --disable-infobars --noerrdialogs --dis
 
 Le script installe maintenant tous les composants dans le dossier `C:\OdooPOS` au lieu de `%ProgramFiles%\OdooPOS`. Ce changement offre une meilleure compatibilité et un accès plus direct aux fichiers d'installation, notamment pour les utilisateurs sans droits administrateur qui pourraient avoir besoin d'accéder aux fichiers.
 
-### Installation de l'extension Chrome
+### Installation des extensions Chrome
 
-En raison des restrictions de sécurité de Chrome, l'installation automatique de l'extension nécessite des étapes manuelles. Le script télécharge l'extension et fournit des instructions détaillées pour l'installation.
+En raison des restrictions de sécurité de Chrome, l'installation automatique des extensions nécessite des étapes manuelles. Le script télécharge les extensions suivantes et fournit des instructions détaillées pour leur installation :
+
+- Extension pour le tiroir-caisse : permet de contrôler le tiroir-caisse depuis l'interface Odoo POS
+- Extension pour l'échéancier : améliore la gestion des paiements échelonnés dans Odoo POS
 
 ### Webservice non signé
 
@@ -120,7 +126,11 @@ Le webservice n'étant pas signé numériquement, le script l'exécute une premi
 
 ### Conversion de l'icône
 
-Le script tente de convertir automatiquement l'icône Odoo. Si cette opération échoue, une icône par défaut de Windows sera utilisée.
+Le script utilise l'icône Odoo incluse dans le dépôt. Si cette icône n'est pas disponible, une icône par défaut de Windows sera utilisée.
+
+### Configuration automatique
+
+À la fin de l'installation, le script ouvre automatiquement l'assistant de configuration du webservice dans Chrome à l'adresse http://localhost:22548/config pour faciliter la configuration du tiroir-caisse.
 
 ## ⚠️ Résolution des problèmes
 
@@ -149,6 +159,12 @@ Si l'installation de Chrome échoue, vous pouvez l'installer manuellement depuis
 ### Le webservice ne démarre pas
 
 Vérifiez que la tâche planifiée a bien été créée en ouvrant le Planificateur de tâches Windows et en recherchant "OdooPOSCashdrawerService".
+
+### Les extensions ne s'installent pas
+
+Si le téléchargement des extensions échoue, vous pouvez les installer manuellement en téléchargeant les fichiers depuis les dépôts GitHub suivants :
+- Extension tiroir-caisse : https://github.com/SICALAIT/chrome_extention_odoo_pos_cashdrawer
+- Extension échéancier : https://github.com/SICALAIT/chrome_extension_odoo_pos_echeancier
 
 ## 📞 Support
 
